@@ -1,13 +1,21 @@
 ﻿using WorkFlowLog.Data;
 using WorkFlowLog.Entities;
 using WorkFlowLog.Repositories;
-using WorkFlowLog.Entities;
-using WorkFlowLog.Repositories;
 
 var employeeRepository = new SqlRepository<Employee>(new WorkFlowDbContext());
+var orderRepository = new SqlRepository<Order>(new WorkFlowDbContext());
+
 AddEmployees(employeeRepository);
-AddEngineer(employeeRepository);
+AddEngineers(employeeRepository);
+AddOrders(orderRepository);
+
+Console.WriteLine("Lista pracowników:");
 WriteAllToConsole(employeeRepository);
+
+Console.WriteLine();
+Console.WriteLine("Lista zleceń:");
+WriteAllToConsole(orderRepository);
+
 
 static void AddEmployees(IRepository<Employee> repository)
 {
@@ -41,7 +49,7 @@ static void AddEmployees(IRepository<Employee> repository)
     repository.Save();
 }
 
-static void AddEngineer(IWriteRepository<EngineerEmployee> repository)
+static void AddEngineers(IWriteRepository<EngineerEmployee> repository)
 {
     repository.Add(new EngineerEmployee
     {
@@ -62,6 +70,24 @@ static void AddEngineer(IWriteRepository<EngineerEmployee> repository)
         HourlyRate = 75.4,
         LaboratoryName = "PCH"
     });
+    repository.Save();
+
+}
+static void AddOrders(IWriteRepository<Order> repository)
+{
+    repository.Add(new Order
+    {
+        Name = "Czujnik poziomu",
+        Description = "Wykonanie na potrzeby wewnętrzne",
+        OrderId = 321,
+    });
+
+    repository.Add(new Order
+    {
+        Name = "Czujnik obecności cieczy",
+        Description = "Wykonanie na zamówienie nr 24/04/12",
+        OrderId = 322,
+    }); 
     repository.Save();
 
 }
