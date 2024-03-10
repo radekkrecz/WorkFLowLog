@@ -6,7 +6,7 @@ namespace WorkFlowLog.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public long PeselNumber { get; set; }
+        public string PeselNumber { get; set; }
         public string JobName { get; set; }
         public double HourlyRate { get; set; }
 

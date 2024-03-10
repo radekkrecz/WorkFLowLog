@@ -23,7 +23,7 @@ static void AddEmployees(IRepository<Employee> repository)
     {
         FirstName = "Barbara",
         LastName = "Nowak", 
-        PeselNumber = 94717046242, 
+        PeselNumber = "94717046242", 
         JobName = "Starszay montażysta", 
         HourlyRate = 47.2 
     });
@@ -32,7 +32,7 @@ static void AddEmployees(IRepository<Employee> repository)
     {
         FirstName = "Grażyna",
         LastName = "Podsiadło",
-        PeselNumber = 77408557098,
+        PeselNumber = "77408557098",
         JobName = "Montażysta",
         HourlyRate = 35.4
     });
@@ -41,7 +41,7 @@ static void AddEmployees(IRepository<Employee> repository)
     {
         FirstName = "Robert",
         LastName = "Lewandowski",
-        PeselNumber = 87367854248,
+        PeselNumber = "87367854248",
         JobName = "Montażysta",
         HourlyRate = 33.8
     });
@@ -55,7 +55,7 @@ static void AddEngineers(IWriteRepository<EngineerEmployee> repository)
     {
         FirstName = "Jacek",
         LastName = "Baran",
-        PeselNumber = 87367854248,
+        PeselNumber = "87367854248",
         JobName = "Starszy inżynier elelktronik",
         HourlyRate = 87.9,
         LaboratoryName = "PRE"
@@ -65,11 +65,12 @@ static void AddEngineers(IWriteRepository<EngineerEmployee> repository)
     {
         FirstName = "Aldona",
         LastName = "Zdradzisz",
-        PeselNumber = 90419808357,
+        PeselNumber = "90419808357",
         JobName = "Kierownik pracowni chemicznej",
         HourlyRate = 75.4,
         LaboratoryName = "PCH"
     });
+
     repository.Save();
 
 }
