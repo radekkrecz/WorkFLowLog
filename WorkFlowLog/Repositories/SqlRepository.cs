@@ -8,14 +8,19 @@ namespace WorkFlowLog.Repositories
         private readonly DbSet<T> _dbSet;
         private readonly DbContext _dbContext;
 
+        public event EventHandler<T>? ItemAdded;
+        public event EventHandler<T>? ItemRemoved;
+
         public SqlRepository(DbContext dbContext)
         {
             _dbContext = dbContext;
-            _dbSet = _dbContext.Set<T>();   
+            _dbSet = _dbContext.Set<T>();
         }
+
         public void Add(T item)
         {
             _dbSet.Add(item);
+            ItemAdded?.Invoke(this, item);
         }
 
         public IEnumerable<T> GetAll()
@@ -30,7 +35,15 @@ namespace WorkFlowLog.Repositories
 
         public void Remove(T item)
         {
-            _dbSet.Remove(item);
+            try
+            {
+                _dbSet.Remove(item);
+                ItemRemoved?.Invoke(this, item);
+            }
+            catch (Exception)
+            {
+                throw new Exception($"Cannot remove item {item}");
+            }
         }
 
         public void Save()

@@ -10,6 +10,6 @@ namespace WorkFlowLog.Entities
         public string JobName { get; set; }
         public double HourlyRate { get; set; }
 
-        public override string ToString() => $"ID: {Id}, {FirstName} {LastName}";
+        public override string ToString() => $"ID: {Id}, First name:{FirstName}, Last name:{LastName}, PESEL:{PeselNumber}, Job name:{JobName}";
     }
 }
