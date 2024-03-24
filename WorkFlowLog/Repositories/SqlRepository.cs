@@ -1,54 +1,62 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using WorkFlowLog.Data;
+using WorkFlowLog.DataProviders;
+using WorkFlowLog.DataProviders.Interfaces;
 using WorkFlowLog.Entities;
 
-namespace WorkFlowLog.Repositories
+namespace WorkFlowLog.Repositories;
+
+public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
 {
-    public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
+    private readonly DbSet<T> _dbSet;
+    private readonly WorkFlowDbContext _dbContext;
+
+    public event EventHandler<T>? ItemAdded;
+    public event EventHandler<T>? ItemRemoved;
+
+    public SqlRepository(WorkFlowDbContext dbContext)
     {
-        private readonly DbSet<T> _dbSet;
-        private readonly DbContext _dbContext;
+        _dbContext = dbContext;
+        _dbSet = _dbContext.Set<T>();
+    }
 
-        public event EventHandler<T>? ItemAdded;
-        public event EventHandler<T>? ItemRemoved;
+    public void Add(T item)
+    {
+        _dbSet.Add(item);
+        ItemAdded?.Invoke(this, item);
+    }
 
-        public SqlRepository(DbContext dbContext)
+    public IEnumerable<T> GetAll()
+    {
+        return _dbSet.OrderBy(item => item.Id).ToList();
+    }
+
+    public T? GetById(int id)
+    {
+        return _dbSet.Find(id);    
+    }
+
+    public void Remove(T item)
+    {
+        try
         {
-            _dbContext = dbContext;
-            _dbSet = _dbContext.Set<T>();
+            _dbSet.Remove(item);
+            ItemRemoved?.Invoke(this, item);
         }
-
-        public void Add(T item)
+        catch (Exception)
         {
-            _dbSet.Add(item);
-            ItemAdded?.Invoke(this, item);
+            throw new Exception($"Cannot remove item {item}");
         }
+    }
 
-        public IEnumerable<T> GetAll()
-        {
-            return _dbSet.OrderBy(item => item.Id).ToList();
-        }
+    public void Save()
+    {
+        _dbContext.SaveChanges();
+    }
 
-        public T? GetById(int id)
-        {
-            return _dbSet.Find(id);    
-        }
-
-        public void Remove(T item)
-        {
-            try
-            {
-                _dbSet.Remove(item);
-                ItemRemoved?.Invoke(this, item);
-            }
-            catch (Exception)
-            {
-                throw new Exception($"Cannot remove item {item}");
-            }
-        }
-
-        public void Save()
-        {
-            _dbContext.SaveChanges();
-        }
+    public void WriteFile(string path, IRepository<T> repository)
+    {
+        throw new NotImplementedException();
     }
 }

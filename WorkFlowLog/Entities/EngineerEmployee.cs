@@ -1,9 +1,8 @@
-﻿namespace WorkFlowLog.Entities
-{
-    public class EngineerEmployee : Employee
-    {
-        public string LaboratoryName { get; set; }
+﻿namespace WorkFlowLog.Entities;
 
-        public override string ToString() => base.ToString() + $" (Inżynier pracowni {LaboratoryName})";
-    }
+public class EngineerEmployee : Employee
+{
+    public string LaboratoryName { get; set; }
+
+    public override string ToString() => base.ToString() + $" (Inżynier pracowni {LaboratoryName})";
 }

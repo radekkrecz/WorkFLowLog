@@ -1,10 +1,9 @@
 ﻿using WorkFlowLog.Entities;
 
-namespace WorkFlowLog.Repositories
+namespace WorkFlowLog.Repositories;
+
+public interface IReadRepository<out T> where T : class, IEntity
 {
-    public interface IReadRepository<out T> where T : class, IEntity
-    {
-        IEnumerable<T> GetAll();
-        T? GetById(int id);
-    }
+    IEnumerable<T> GetAll();
+    T? GetById(int id);
 }

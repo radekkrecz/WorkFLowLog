@@ -1,7 +1,6 @@
-﻿namespace WorkFlowLog.Entities
+﻿namespace WorkFlowLog.Entities;
+
+public class EntityBase : IEntity
 {
-    public class EntityBase : IEntity
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
 }

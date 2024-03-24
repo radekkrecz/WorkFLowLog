@@ -1,12 +1,34 @@
-﻿using System.Globalization;
-using System.Text;
-using System.Text.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using WorkFlowLog;
 using WorkFlowLog.Data;
+using WorkFlowLog.DataProviders;
+using WorkFlowLog.DataProviders.Interfaces;
 using WorkFlowLog.Entities;
 using WorkFlowLog.Repositories;
 
 Console.Title = "WorkFlowLog";
 
+var services = new ServiceCollection();
+
+services.AddSingleton<IApp, App>();
+services.AddSingleton<IRepository<Employee>, SqlRepository<Employee>>();
+services.AddSingleton<IRepository<Order>, SqlRepository<Order>>();
+services.AddSingleton<IEmployeesProvider, EmployeesProvider>();
+services.AddSingleton<IOrdersProvider, OrdersProvider>();
+services.AddSingleton<IUserCommunication, UserCommunication>();
+services.AddSingleton<IFileDataProvider<Employee>, FileDataProvider<Employee>>();   
+services.AddSingleton<IFileDataProvider<Order>, FileDataProvider<Order>>();
+services.AddDbContext<WorkFlowDbContext>(option => option.UseInMemoryDatabase("WorkFlowLogDb"));
+
+var serviceProvider = services.BuildServiceProvider();
+
+var app = serviceProvider.GetService<IApp>()!;
+
+app.Run();
+
+/*
 PrintLine("Witaj w programie WorkFlowLog", ConsoleColor.Yellow);
 PrintLine("WorkFlowLog to aplikacja zaprojektowana w celu usprawnienia " +
     "śledzenia czasu i zarządzania godzinami pracy pracowników, przydzielonymi zadaniami " +
@@ -343,3 +365,4 @@ static void PrintLine(string message, ConsoleColor color)
     Console.WriteLine(message);
     Console.ResetColor();
 }
+*/

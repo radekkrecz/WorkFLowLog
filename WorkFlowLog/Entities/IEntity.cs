@@ -1,7 +1,6 @@
-﻿namespace WorkFlowLog.Entities
+﻿namespace WorkFlowLog.Entities;
+
+public interface IEntity
 {
-    public interface IEntity
-    {
-        int Id { get; set; }
-    }
+    int Id { get; set; }
 }

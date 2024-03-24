@@ -1,8 +1,9 @@
 ﻿using WorkFlowLog.Entities;
 
-namespace WorkFlowLog.Repositories
+namespace WorkFlowLog.Repositories;
+
+public interface IRepository<T> : IReadRepository<T>, IWriteRepository<T> where T : class, IEntity
 {
-    public interface IRepository<T> : IReadRepository<T>, IWriteRepository<T> where T : class, IEntity, new()
-    {
-    }
+    event EventHandler<T>? ItemAdded;
+    event EventHandler<T>? ItemRemoved;
 }
