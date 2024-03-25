@@ -1,5 +1,5 @@
 using WorkFlowLog.Data;
-using WorkFlowLog.Entities;
+using WorkFlowLog.Data.Entities;
 using WorkFlowLog.Repositories;
 
 namespace WorkFlowLog.Tests

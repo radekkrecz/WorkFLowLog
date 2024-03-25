@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using WorkFlowLog;
+using WorkFlowLog.Components.CsvReader;
+using WorkFlowLog.Components.DataProviders;
+using WorkFlowLog.Components.DataProviders.Interfaces;
+using WorkFlowLog.Components.ReportCreator;
 using WorkFlowLog.Data;
-using WorkFlowLog.DataProviders;
-using WorkFlowLog.DataProviders.Interfaces;
-using WorkFlowLog.Entities;
-using WorkFlowLog.Repositories;
+using WorkFlowLog.Data.Entities;
+using WorkFlowLog.Data.Repositories;
 
 Console.Title = "WorkFlowLog";
 
@@ -20,6 +21,8 @@ services.AddSingleton<IUserCommunication, UserCommunication>();
 services.AddSingleton<IFileDataProvider<Employee>, FileDataProvider<Employee>>();   
 services.AddSingleton<IFileDataProvider<Order>, FileDataProvider<Order>>();
 services.AddDbContext<WorkFlowDbContext>();
+services.AddSingleton<ICsvReader, CsvReader>();
+services.AddSingleton<IReportCreator, ReportCreator>();
 
 var serviceProvider = services.BuildServiceProvider();
 

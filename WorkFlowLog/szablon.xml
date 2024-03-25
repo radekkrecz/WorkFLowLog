@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Manufacturers>
+	<Manufacturer Name="XX" Country="XX" >
+		<Cars country="Germany" CombinedSum="999">
+			<Car Model="XX" Combined="XX" />
+			<Car Model="XX" Combined="XX" />
+		</Cars>
+	</Manufacturer>
+	<Manufacturer Name="XX" Country="XX" >
+		<Cars country="Germany" CombinedSum="999">
+			<Car Model="XX" Combined="XX" />
+			<Car Model="XX" Combined="XX" />
+		</Cars>
+	</Manufacturer>
+	<Manufacturer Name="XX" Country="XX" >
+		<Cars country="Germany" CombinedSum="999">
+			<Car Model="XX" Combined="XX" />
+			<Car Model="XX" Combined="XX" />
+		</Cars>
+	</Manufacturer>
+</Manufacturers>

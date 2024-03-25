@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using WorkFlowLog.Entities;
+using WorkFlowLog.Data.Entities;
 
 namespace WorkFlowLog.Data
 {
