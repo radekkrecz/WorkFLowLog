@@ -1,46 +1,94 @@
-﻿using WorkFlowLog.Components.CsvReader.Extensions;
+﻿using System.Globalization;
 using WorkFlowLog.Components.CsvReader.Models;
 
 namespace WorkFlowLog.Components.CsvReader;
 
 public class CsvReader : ICsvReader
 {
-    public List<Car> ProcessCars(string filePath)
+    public List<Employee> ProcessEmployees(string filePath)
     {
         if (!File.Exists(filePath))
         {
-            return new List<Car>();
+            return new List<Employee>();
         }
 
-        var cars = File.ReadAllLines(filePath)
+        var employees = File.ReadAllLines(filePath)
             .Skip(1)
-            .Where(line => line.Length > 1)
-            .ToCar();
-
-        return cars.ToList();
-    }
-
-    public List<Manufacturer> ProcessManufacturers(string filePath)
-    {
-        if (!File.Exists(filePath))
-        {
-            return new List<Manufacturer>();
-        }
-
-        var manufacturers = File.ReadAllLines(filePath)
             .Where(line => line.Length > 1)
             .Select(line =>
             {
-                var columns = line.Split(',');
-
-                return new Manufacturer
+                var columns = line.Split(';');
+                return new Employee
                 {
-                    Name = columns[0],
-                    Country = columns[1],
-                    Year = int.Parse(columns[2])
+                    FirstName = columns[0],
+                    LastName = columns[1],
+                    FullTimeEmployee = ConvertStringToDouble(columns[2])
                 };
             });
 
-        return manufacturers.ToList();
+        return employees.ToList();  
+    }
+
+    public List<Project> ProcessProjects(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            return new List<Project>();
+        }
+
+        var projects = File.ReadAllLines(filePath)
+            .Skip(1)
+            .Where(line => line.Length > 1)
+            .Select(line =>
+            {
+                var columns = line.Split(';');
+                return new Project
+                {
+                    Name = columns[0],
+                    OrderId = ConvertStringToInt(columns[1]),
+                    CustomerId = ConvertStringToInt(columns[2])
+                };
+            });
+
+        return projects.ToList();
+    }
+
+    int ConvertStringToInt(string input)
+    {
+        if (int.TryParse(input, out int result))
+        {
+            return result;
+        }
+        return 0;
+    }
+
+    double ConvertStringToDouble(string input)
+    {
+        if(string.IsNullOrEmpty(input))
+        {
+            return 0;
+        }
+
+        CultureInfo cultureInfo;
+
+        // Określenie, czy używany jest format europejski czy amerykański
+        if (input.Contains(",") && (input.IndexOf(',') < input.IndexOf('.') || !input.Contains(".")))
+        {
+            // Format europejski, np. 1.234,56
+            cultureInfo = (CultureInfo)CultureInfo.GetCultureInfo("pl-PL").Clone();
+        }
+        else
+        {
+            // Format amerykański, np. 1,234.56
+            cultureInfo = (CultureInfo)CultureInfo.GetCultureInfo("en-US").Clone();
+        }
+
+        cultureInfo.NumberFormat.NumberGroupSeparator = cultureInfo.NumberFormat.NumberDecimalSeparator == "." ? "," : ".";
+
+        if (double.TryParse(input, NumberStyles.Any, cultureInfo, out double result))
+        {
+            return result;
+        }
+        return 0;
     }
 }

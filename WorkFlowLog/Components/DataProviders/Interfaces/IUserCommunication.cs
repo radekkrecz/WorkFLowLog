@@ -8,8 +8,8 @@ public interface IUserCommunication
     void ShowMessage(string message);
     void ShowWarning(string message);
     string? GetInput(string message, bool convertToUpper = true);
-    void ShowOrders(List<Order> orders);
-    void ShowOrder(Order order);
+    void ShowProjects(List<Project> projects);
+    void ShowProject(Project project);
     void ShowEmployees(List<Employee> employees);
     void ShowEmployee(Employee employee);
 }

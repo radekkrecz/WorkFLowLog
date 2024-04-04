@@ -1,6 +1,9 @@
 ﻿using System;
+using WorkFlowLog.Components.CsvReader.Models;
 using WorkFlowLog.Components.DataProviders.Interfaces;
 using WorkFlowLog.Data.Entities;
+using Employee = WorkFlowLog.Data.Entities.Employee;
+using Project = WorkFlowLog.Data.Entities.Project;
 
 namespace WorkFlowLog.Components.DataProviders;
 
@@ -37,9 +40,11 @@ public class UserCommunication : IUserCommunication
         ShowMessage("1 - Odczyt wszystkich pracowników");
         ShowMessage("2 - Dodanie nowego pracownika");
         ShowMessage("3 - Usunięcie pracownika");
-        ShowMessage("4 - Odczyt wszystkich zamówień");
-        ShowMessage("5 - Dodanie nowego zamówienia");
-        ShowMessage("6 - Usunięcie zamówienia");
+        ShowMessage("4 - Odczyt wszystkich projektów");
+        ShowMessage("5 - Dodanie nowego projektu");
+        ShowMessage("6 - Usunięcie projektu");
+        ShowMessage("7 - Załadowanie listy pracowników z pliku CSV");
+        ShowMessage("8 - Załadowanie listy projektów z pliku CSV");
         ShowMessage("q - Wyjście\n");
     }
 
@@ -48,16 +53,16 @@ public class UserCommunication : IUserCommunication
         PrintLine(message, ConsoleColor.White);
     }
 
-    public void ShowOrder(Order order)
+    public void ShowProject(Project project)
     {
-        PrintLine(order.ToString(), ConsoleColor.Green);
+        PrintLine(project.ToString(), ConsoleColor.Green);
     }
 
-    public void ShowOrders(List<Order> orders)
+    public void ShowProjects(List<Project> projects)
     {
-        foreach (var order in orders)
+        foreach (var project in projects)
         {
-            ShowOrder(order);
+            ShowProject(project);
         }
     }
 

@@ -1,10 +1,9 @@
 ﻿using WorkFlowLog.Components.CsvReader.Models;
-
 namespace WorkFlowLog.Components.CsvReader;
 
 public interface ICsvReader
 {
-    List<Car> ProcessCars(string filePath);
+    List<Employee> ProcessEmployees(string filePath);
 
-    List<Manufacturer> ProcessManufacturers(string filePath);
+    List<Project> ProcessProjects(string filePath);
 }

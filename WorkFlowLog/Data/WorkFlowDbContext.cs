@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using WorkFlowLog.Data.Entities;
 
 namespace WorkFlowLog.Data
 {
     public class WorkFlowDbContext : DbContext   
     {
-        DbSet<Order> Orders => Set<Order>();
-        DbSet<Employee> Employees => Set<Employee>();
+        public DbSet<Project> Projects => Set<Project>();
+        public DbSet<Employee> Employees => Set<Employee>();
 
         public WorkFlowDbContext(DbContextOptions<WorkFlowDbContext> options ) : base(options)
         {
@@ -17,7 +16,7 @@ namespace WorkFlowLog.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseInMemoryDatabase("WorkFlowLogDb");
+            optionsBuilder.UseSqlServer("Data Source=DESKTOP-4SSQKEB\\SQLEXPRESS01;Initial Catalog=WorkFLowLogStorage;Integrated Security=True;Encrypt=False");
         }
     }
 }
