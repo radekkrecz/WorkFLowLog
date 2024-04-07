@@ -8,5 +8,7 @@ public interface IWriteRepository<in T> where T : class, IEntity
 
     void Remove(T item);
 
+    void RemoveRange(IEnumerable<T> items);
+    
     void Save();
 }

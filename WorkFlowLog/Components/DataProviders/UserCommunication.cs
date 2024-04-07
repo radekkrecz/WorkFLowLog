@@ -1,7 +1,4 @@
-﻿using System;
-using WorkFlowLog.Components.CsvReader.Models;
-using WorkFlowLog.Components.DataProviders.Interfaces;
-using WorkFlowLog.Data.Entities;
+﻿using WorkFlowLog.Components.DataProviders.Interfaces;
 using Employee = WorkFlowLog.Data.Entities.Employee;
 using Project = WorkFlowLog.Data.Entities.Project;
 
@@ -9,16 +6,19 @@ namespace WorkFlowLog.Components.DataProviders;
 
 public class UserCommunication : IUserCommunication
 {
-    public string? GetInput(string message, bool convertToUpper = true)
+    public string? GetInput(string message)
     {
         if (message != null && message != string.Empty)
         {
             ShowMessage(message!);
         }
 
-        return convertToUpper
-            ? Console.ReadLine()?.Trim().ToUpper()
-            : Console.ReadLine()?.Trim();
+        return Console.ReadLine()?.Trim();
+    }
+
+    public string? GetInputAndConvertToLower(string message)
+    {
+        return GetInput(message)?.ToLower();
     }
 
     public void ShowEmployee(Employee employee)
@@ -34,18 +34,29 @@ public class UserCommunication : IUserCommunication
         }
     }
 
+    public const string ExitCommand = "q";
+    public const string ReadEmployeesCommand = "1";
+    public const string AddEmployeeCommand = "2";
+    public const string RemoveEmployeeCommand = "3";
+    public const string ReadProjectsCommand = "4";
+    public const string AddProjectCommand = "5";
+    public const string RemoveProjectCommand = "6";
+    public const string LoadEmployeesFromCsvCommand = "7";
+    public const string LoadProjectsFromCsvCommand = "8";
+        
+
     public void ShowMenu()
     {
         ShowMessage("\n\n*---------  Główne menu  ---------*\n");
-        ShowMessage("1 - Odczyt wszystkich pracowników");
-        ShowMessage("2 - Dodanie nowego pracownika");
-        ShowMessage("3 - Usunięcie pracownika");
-        ShowMessage("4 - Odczyt wszystkich projektów");
-        ShowMessage("5 - Dodanie nowego projektu");
-        ShowMessage("6 - Usunięcie projektu");
-        ShowMessage("7 - Załadowanie listy pracowników z pliku CSV");
-        ShowMessage("8 - Załadowanie listy projektów z pliku CSV");
-        ShowMessage("q - Wyjście\n");
+        ShowMessage($"{ReadEmployeesCommand} - Odczyt wszystkich pracowników");
+        ShowMessage($"{AddEmployeeCommand} - Dodanie nowego pracownika");
+        ShowMessage($"{RemoveEmployeeCommand} - Usunięcie pracownika");
+        ShowMessage($"{ReadProjectsCommand} - Odczyt wszystkich projektów");
+        ShowMessage($"{AddProjectCommand} - Dodanie nowego projektu");
+        ShowMessage($"{RemoveProjectCommand} - Usunięcie projektu");
+        ShowMessage($"{LoadEmployeesFromCsvCommand} - Załadowanie listy pracowników z pliku CSV");
+        ShowMessage($"{LoadProjectsFromCsvCommand} - Załadowanie listy projektów z pliku CSV");
+        ShowMessage($"{ExitCommand} - Wyjście\n");
     }
 
     public void ShowMessage(string message)

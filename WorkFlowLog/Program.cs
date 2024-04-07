@@ -15,8 +15,6 @@ services.AddSingleton<IApp, App>();
 services.AddSingleton<IRepository<Employee>, SqlRepository<Employee>>();
 services.AddSingleton<IRepository<Project>, SqlRepository<Project>>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
-services.AddSingleton<IFileDataProvider<Employee>, FileDataProvider<Employee>>();   
-services.AddSingleton<IFileDataProvider<Project>, FileDataProvider<Project>>();
 services.AddDbContext<WorkFlowDbContext>();
 services.AddSingleton<ICsvReader, CsvReader>();
 

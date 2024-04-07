@@ -1,8 +1,8 @@
-﻿using System.Text;
-using System.Xml.Linq;
-using WorkFlowLog.Components.CsvReader;
+﻿using WorkFlowLog.Components.CsvReader;
+using WorkFlowLog.Components.DataProviders;
 using WorkFlowLog.Components.DataProviders.Interfaces;
-using WorkFlowLog.Data;
+using WorkFlowLog.Data.Entities;
+using WorkFlowLog.Data.Repositories;
 
 namespace WorkFlowLog;
 
@@ -10,15 +10,18 @@ public class App : IApp
 {
     private readonly IUserCommunication _userCommunication;
     private readonly ICsvReader _csvReader;
-    private readonly WorkFlowDbContext _workFlowDbContext;
+    private readonly IRepository<Employee> _employeeRepository;
+    private readonly IRepository<Project> _projectRepository;
 
-    public App(IUserCommunication userCommunication, ICsvReader csvReader, WorkFlowDbContext workFlowDbContext)
+    public App(IUserCommunication userCommunication,
+        ICsvReader csvReader, 
+        IRepository<Employee> employeeRepository, 
+        IRepository<Project> projectRepository )
     {
         _userCommunication = userCommunication;
         _csvReader = csvReader;
-        _workFlowDbContext = workFlowDbContext;
-
-        _workFlowDbContext.Database.EnsureCreated();
+        _employeeRepository = employeeRepository;
+        _projectRepository = projectRepository;
     }
 
     public void Run()
@@ -33,43 +36,43 @@ public class App : IApp
         while (!exitKeyPressed)
         {
             _userCommunication.ShowMenu();
-            var key = _userCommunication.GetInput(string.Empty);
+            var key = _userCommunication.GetInputAndConvertToLower(string.Empty);
 
             switch (key)
             {
-                case "1":
+                case UserCommunication.ReadEmployeesCommand:
                     ReadAllEmployees();
                     break;
 
-                case "2":
+                case UserCommunication.AddEmployeeCommand:
                     AddEmployee();
                     break;
 
-                case "3":
+                case UserCommunication.RemoveEmployeeCommand:
                     RemoveEmployee();
                     break;
 
-                case "4":
+                case UserCommunication.ReadProjectsCommand:
                     ReadAllProjects();
                     break;
 
-                case "5":
+                case UserCommunication.AddProjectCommand:
                     AddProject();
                     break;
 
-                case "6":
+                case UserCommunication.RemoveProjectCommand:
                     RemoveProject();
                     break;
 
-                case "7":
+                case UserCommunication.LoadEmployeesFromCsvCommand:
                     InsertEmployees();
                     break;
 
-                case "8":
+                case UserCommunication.LoadProjectsFromCsvCommand:
                     InsertProjects();
                     break;
 
-                case "Q":
+                case UserCommunication.ExitCommand:
                     exitKeyPressed = true;
                     break;
 
@@ -88,7 +91,7 @@ public class App : IApp
             return;
         }
 
-        var allOrders = _workFlowDbContext.Projects.ToList();
+        var allOrders = _projectRepository.GetAll().ToList();
 
         var projectToRemove = allOrders.FirstOrDefault
             (x => x.OrderId == int.Parse(projectNumber));
@@ -99,15 +102,15 @@ public class App : IApp
             return;
         }
 
-        _workFlowDbContext.Projects.Remove(projectToRemove);
-        _workFlowDbContext.SaveChanges();
+        _projectRepository.Remove(projectToRemove);
+        _projectRepository.Save();
 
         _userCommunication.ShowMessage($"Usunięto projekt nr {projectToRemove.OrderId}");
     }
 
     void AddProject()
     {
-        var projectName = _userCommunication.GetInput("Podaj nazwę projektu:", false);
+        var projectName = _userCommunication.GetInput("Podaj nazwę projektu:");
         if (projectName == null || projectName == "")
         {
             _userCommunication.ShowWarning("Błąd w danych projektu");
@@ -130,21 +133,21 @@ public class App : IApp
             return;
         }
 
-        _workFlowDbContext.Projects.Add(new Data.Entities.Project
+        _projectRepository.Add(new Project
         {
             Name = projectName,
             OrderId = orderId,
             CustomerId = clientId
         });
 
-        _workFlowDbContext.SaveChanges();
+        _projectRepository.Save();
 
         _userCommunication.ShowMessage($"Dodano projekt {projectName}");
     }
 
     void ReadAllProjects()
     {
-        var projects = _workFlowDbContext.Projects.ToList();
+        var projects = _projectRepository.GetAll().ToList();
 
         _userCommunication.ShowMessage($"Ilość zamówień w bazie: {projects.Count}");
 
@@ -160,7 +163,7 @@ public class App : IApp
             return;
         }
 
-        var allEmployees = _workFlowDbContext.Employees.ToList();
+        var allEmployees = _employeeRepository.GetAll().ToList();
         var employeesToRemove = allEmployees.Where(x => x.LastName == lastName).ToList();
 
         if (employeesToRemove == null)
@@ -189,8 +192,8 @@ public class App : IApp
                 return;
             }
 
-            _workFlowDbContext.Employees.Remove(employeeToRemove);
-            _workFlowDbContext.SaveChanges();
+            _employeeRepository.Remove(employeeToRemove);
+            _employeeRepository.Save();
 
             _userCommunication.ShowMessage($"Usunięto pracownika {employeeToRemove.FirstName} {employeeToRemove.LastName}.");
             return;
@@ -198,8 +201,8 @@ public class App : IApp
         else
         {
             var employeeToRemove = employeesToRemove.FirstOrDefault();
-            _workFlowDbContext.Employees.Remove(employeeToRemove);
-            _workFlowDbContext.SaveChanges();
+            _employeeRepository.Remove(employeeToRemove);
+            _employeeRepository.Save();
 
             _userCommunication.ShowMessage($"Usunięto pracownika {employeeToRemove.FirstName} {employeeToRemove.LastName}.");
         }
@@ -207,7 +210,7 @@ public class App : IApp
 
     void AddEmployee()
     {
-        var firstName = _userCommunication.GetInput("Podaj imię pracownika:", false);
+        var firstName = _userCommunication.GetInput("Podaj imię pracownika:");
 
         if (firstName == null || firstName == "")
         {
@@ -215,7 +218,7 @@ public class App : IApp
             return;
         }
 
-        var lastName = _userCommunication.GetInput("Podaj nazwisko pracownika:", false);
+        var lastName = _userCommunication.GetInput("Podaj nazwisko pracownika:");
         if (lastName == null || lastName == "")
         {
             _userCommunication.ShowWarning("Błąd w danych pracownika");
@@ -231,14 +234,14 @@ public class App : IApp
 
         if (double.TryParse(hourlyRate, out double result))
         {
-            _workFlowDbContext.Employees.Add(new Data.Entities.Employee
+            _employeeRepository.Add(new Employee
             {
                 FirstName = firstName,
                 LastName = lastName,
                 FullTimeEmployee = result
             });
 
-            _workFlowDbContext.SaveChanges();
+            _employeeRepository.Save();
 
             _userCommunication.ShowMessage($"Dodano pracownika {firstName} {lastName}");
         }
@@ -250,7 +253,7 @@ public class App : IApp
     }
     void ReadAllEmployees()
     {
-        var employees = _workFlowDbContext.Employees.ToList();
+        var employees = _employeeRepository.GetAll().ToList();
 
         _userCommunication.ShowMessage($"Ilość pracowników w bazie: {employees.Count}");
 
@@ -259,50 +262,52 @@ public class App : IApp
 
     void InsertEmployees()
     {
-        var deleteAll = _userCommunication.GetInput("Czy usunąć wszystkich pracowników? (Y/n)", false);
+        var deleteAll = _userCommunication.GetInput("Czy usunąć wszystkich pracowników? (Y/n)");
         if (deleteAll == "Y")
         {
-            _workFlowDbContext.Employees.RemoveRange(_workFlowDbContext.Employees);
-            _workFlowDbContext.SaveChanges();
+            _employeeRepository.RemoveRange(_employeeRepository.GetAll());
+            _employeeRepository.Save();
         }
 
         var employees = _csvReader.ProcessEmployees("Resources\\Files\\employees.csv");
 
         foreach (var employee in employees)
         {
-            _workFlowDbContext.Employees.Add(new Data.Entities.Employee
+            _employeeRepository.Add(new Employee
             {
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
                 FullTimeEmployee = employee.FullTimeEmployee
             });
         }
-        _workFlowDbContext.SaveChanges();
+        _employeeRepository.Save();
 
-        _userCommunication.ShowMessage($"Ilość pracowników w bazie: {employees.Count}");
+        _userCommunication.ShowMessage($"Ilość dodanych pracowników do bazy: {employees.Count}");
+        _userCommunication.ShowMessage($"Ilość pracowników w bazie: {_employeeRepository.GetAll().ToList().Count}");
     }
     void InsertProjects()
     {
-        var deleteAll = _userCommunication.GetInput("Czy usunąć wszystkie projekty? (Y/n)", false);
+        var deleteAll = _userCommunication.GetInput("Czy usunąć wszystkie projekty? (Y/n)");
         if (deleteAll == "Y")
         {
-            _workFlowDbContext.Projects.RemoveRange(_workFlowDbContext.Projects);
-            _workFlowDbContext.SaveChanges();
+            _projectRepository.RemoveRange(_projectRepository.GetAll());
+            _employeeRepository.Save();
         }
 
         var projects = _csvReader.ProcessProjects("Resources\\Files\\projects.csv");
 
         foreach (var project in projects)
         {
-            _workFlowDbContext.Projects.Add(new Data.Entities.Project
+            _projectRepository.Add(new Project
             {
                 Name = project.Name,
                 OrderId = project.OrderId,
                 CustomerId = project.CustomerId
             });
         }
-        _workFlowDbContext.SaveChanges();
+        _employeeRepository.Save();
 
-        _userCommunication.ShowMessage($"Ilość projektów w bazie: {projects.Count}");
+        _userCommunication.ShowMessage($"Ilość dodanych projektów do bazy: {projects.Count}");
+        _userCommunication.ShowMessage($"Ilość projektów w bazy: {_projectRepository.GetAll().ToList().Count}");
     }
 }

@@ -55,4 +55,9 @@ public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
     {
         throw new NotImplementedException();
     }
+
+    public void RemoveRange(IEnumerable<T> items)
+    {
+        _dbSet.RemoveRange(items);
+    }
 }
