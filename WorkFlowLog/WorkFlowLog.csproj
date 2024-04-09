@@ -14,10 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\Files\employees.csv">
+    <None Update="DataAccess\Resources\Files\employees.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Files\projects.csv">
+    <None Update="DataAccess\Resources\Files\operations.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DataAccess\Resources\Files\projects.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
